@@ -322,6 +322,13 @@
     border-radius:12px;padding:14px 16px;font-size:.88rem;color:var(--ink);
     white-space:pre-wrap;line-height:1.65;
   }
+
+  .diag-tlabel{display:block;font-size:.8rem;font-weight:700;color:var(--ink-soft);margin-bottom:8px;}
+  #diag-text{
+    width:100%;font:inherit;color:var(--ink);min-height:104px;resize:vertical;
+    background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:12px 13px;
+  }
+  #diag-text:focus{outline:2px solid var(--scale);outline-offset:1px;}
   .diag-note{font-size:.74rem;color:var(--ink-faint);margin-top:16px;}
 
   /* ---- feedback ---- */
@@ -1129,36 +1136,39 @@
 
   <section id="diagnosis" hidden>
     <div class="eyebrow">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3.2"/><path d="M8 5l1.5-2h5L16 5"/></svg>
-      캐릭터 진단
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a7 7 0 0 1 4 12.7V18H8v-2.3A7 7 0 0 1 12 3Z"/><path d="M9 21h6"/></svg>
+      AI 상담
     </div>
-    <h2>내 캐릭터창, 뭐부터 키우면 될까?</h2>
-    <p class="section-desc">캐릭터창(환령 정보·스탯·보구 화면)을 캡처해서 올리면 AI가 화면을 보고 다음 우선순위를 짚어줘요.</p>
+    <h2>내 상황을 말하면, 짚어드려요</h2>
+    <p class="section-desc">위 자가진단으로 안 풀리는 게 있을 때 쓰세요. 체크해둔 내용까지 같이 참고해서 답합니다.</p>
 
     <div class="diag-card">
-
-      <div id="diag-active">
+      <div id="diag-image-mode" hidden>
         <label class="diag-dropzone" for="char-file">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
           <div class="dz-main">캐릭터창 스크린샷 올리기</div>
           <div class="dz-sub">탭해서 사진 선택</div>
         </label>
         <input type="file" id="char-file" accept="image/*" style="display:none;">
-
         <div id="diag-preview" class="diag-preview" hidden>
           <img id="diag-preview-img" alt="업로드한 캐릭터창 미리보기">
           <div class="fname" id="diag-fname"></div>
         </div>
-
-        <button id="diag-ask-btn" class="diag-btn" disabled>이 캐릭터 진단받기</button>
-
-        <div id="diag-status" class="diag-status" hidden>
-          <span class="diag-spin"></span><span id="diag-status-text">보는 중...</span>
-        </div>
-        <div id="diag-result" class="diag-result" hidden></div>
       </div>
 
-      <p class="diag-note">AI가 화면에 보이는 정보만으로 참고용 조언을 드려요. 게임 내 정확한 최적해와 다를 수 있으니 참고로만 봐주세요. 첫 진단 시 클로드 사용 동의가 한 번 필요해요.</p>
+      <div id="diag-text-mode" hidden>
+        <label class="diag-tlabel" for="diag-text">지금 어떤 상황인가요?</label>
+        <textarea id="diag-text" placeholder="예) 시작한 지 2주쯤 됐고 주력이 SSR 하나뿐이에요. 장비 던전 보스에서 자꾸 전멸하는데 뭘 먼저 손봐야 할까요?"></textarea>
+      </div>
+
+      <button id="diag-ask-btn" class="diag-btn" disabled>진단받기</button>
+
+      <div id="diag-status" class="diag-status" hidden>
+        <span class="diag-spin"></span><span id="diag-status-text">생각하는 중...</span>
+      </div>
+      <div id="diag-result" class="diag-result" hidden></div>
+
+      <p class="diag-note">AI가 알려준 정보만으로 참고용 조언을 드려요. 게임 내 정확한 최적해와 다를 수 있으니 참고로만 봐주세요. 첫 사용 시 클로드 사용 동의가 한 번 필요해요.</p>
     </div>
   </section>
 
@@ -1234,95 +1244,131 @@
 (function(){
   "use strict";
 
-  // ---------- 캐릭터 진단 ----------
+  // ---------- AI 상담 (claude.ai 화면에서만 노출) ----------
   (async function initDiagnosis(){
     const sectionEl = document.getElementById('diagnosis');
-    const navEl = document.getElementById('nav-diagnosis');
+    const navEl     = document.getElementById('nav-diagnosis');
+    const imgMode   = document.getElementById('diag-image-mode');
+    const txtMode   = document.getElementById('diag-text-mode');
     const fileInput = document.getElementById('char-file');
-    const dropzone = document.querySelector('.diag-dropzone');
+    const textInput = document.getElementById('diag-text');
     const previewWrap = document.getElementById('diag-preview');
-    const previewImg = document.getElementById('diag-preview-img');
-    const fnameEl = document.getElementById('diag-fname');
-    const askBtn = document.getElementById('diag-ask-btn');
-    const statusEl = document.getElementById('diag-status');
-    const statusText = document.getElementById('diag-status-text');
-    const resultEl = document.getElementById('diag-result');
+    const previewImg  = document.getElementById('diag-preview-img');
+    const fnameEl   = document.getElementById('diag-fname');
+    const askBtn    = document.getElementById('diag-ask-btn');
+    const statusEl  = document.getElementById('diag-status');
+    const statusText= document.getElementById('diag-status-text');
+    const resultEl  = document.getElementById('diag-result');
 
-    // 이 기능은 claude.ai 화면에서만 동작해요. 그 외(공개 사이트 등)에서는
-    // 섹션과 메뉴 배지를 아예 띄우지 않아, 못 쓰는 기능이 보이지 않게 합니다.
     let sample;
-    try {
-      sample = await claude.use('sample');
-    } catch (e) {
-      sample = null;
-    }
+    try { sample = await claude.use('sample'); } catch (e) { sample = null; }
     if (!sample) return;
 
     let caps = null;
     try { caps = await sample.limits(); } catch (e) { caps = null; }
-    if (!caps || !caps.images) return;
 
-    fileInput.accept = caps.images.mediaTypes.join(',');
+    // 이 뷰어가 이미지를 받아주면 스크린샷 모드, 아니면 글로 적는 모드로 연다.
+    const useImages = !!(caps && caps.images);
+    if (useImages) {
+      fileInput.accept = caps.images.mediaTypes.join(',');
+      imgMode.hidden = false;
+      askBtn.textContent = '이 캐릭터 진단받기';
+    } else {
+      txtMode.hidden = false;
+      askBtn.disabled = false;
+      askBtn.textContent = '조언 받기';
+    }
     sectionEl.hidden = false;
     if (navEl) navEl.hidden = false;
 
     let chosenFile = null;
+    if (useImages) {
+      fileInput.addEventListener('change', function(){
+        const f = fileInput.files && fileInput.files[0];
+        if (!f) return;
+        chosenFile = f;
+        previewImg.src = URL.createObjectURL(f);
+        fnameEl.textContent = f.name;
+        previewWrap.hidden = false;
+        askBtn.disabled = false;
+        resultEl.hidden = true;
+        statusEl.hidden = true;
+      });
+    }
 
-    fileInput.addEventListener('change', () => {
-      const f = fileInput.files && fileInput.files[0];
-      if (!f) return;
-      chosenFile = f;
-      previewImg.src = URL.createObjectURL(f);
-      fnameEl.textContent = f.name;
-      previewWrap.hidden = false;
-      askBtn.disabled = false;
-      resultEl.hidden = true;
-      statusEl.hidden = true;
-    });
+    // 자가진단에서 체크해둔 내용을 문맥으로 함께 넘긴다.
+    function checkupContext(){
+      let st = {};
+      try { st = JSON.parse(localStorage.getItem('geunomd-checkup-v1') || '{}') || {}; } catch (e) { return ''; }
+      const rows = Array.prototype.slice.call(document.querySelectorAll('#chk-list .chk-row'));
+      if (!rows.length) return '';
+      const doing = [], notYet = [];
+      rows.forEach(function(r){
+        (st[r.dataset.key] ? doing : notYet).push(r.dataset.title);
+      });
+      let s = '';
+      if (doing.length)  s += '\n이 사람이 이미 하고 있다고 표시한 것: ' + doing.join(', ');
+      if (notYet.length) s += '\n아직 안 하고 있다고 표시한 것: ' + notYet.join(', ');
+      return s;
+    }
+
+    const BASE = [
+      "너는 모바일 방치형 RPG '그놈은 드래곤'을 잘 아는 코치야.",
+      "핵심 시스템: 환령(캐릭터) 수집·강화, 여섯 직업(수호자·전사·암살자·마법사·사수·성직자), 전열/중열/후열 배치, 드래곤 계열(원소·광야·지혜·성당·피안) 시너지, 장비 6부위(투구·흉갑·팔보호대·무기·장화·장신구), 성급공명, 호감도, 그리고 마물·아티팩트·마법 이벤트가 각 7일씩 21일 주기로 도는 구조.",
+      "전투는 완전 자동이라 승패는 편성 단계에서 갈려. 그래서 배치와 계열 시너지가 특히 중요해."
+    ].join('\n');
+
+    const TAIL = [
+      "한국어 존댓말로, 번호 목록 형태로 2~4가지만 짚어줘. 각 항목은 1~2문장으로 짧게.",
+      "확인할 수 없는 내용은 추측해서 단정하지 말고 솔직히 모른다고 해줘.",
+      "인사말이나 서론 없이 바로 목록부터 시작해줘."
+    ].join('\n');
 
     function errorCopy(code){
-      switch(code){
+      switch (code) {
         case 'not_granted': return '클로드 사용 동의가 필요해요. 다시 시도하면서 허용을 눌러주세요.';
         case 'image_rejected': return '이 이미지는 읽을 수 없었어요. 다른 스크린샷으로 다시 시도해주세요.';
-        case 'images_unavailable': return '이 화면에서는 이미지 진단을 쓸 수 없어요.';
+        case 'images_unavailable': return '이 화면에서는 이미지를 보낼 수 없어요. 글로 적어서 물어봐주세요.';
         case 'rate_limited': return '요청이 몰렸어요. 잠시 후 다시 시도해주세요.';
         case 'session_expired': return '로그인이 만료됐어요. 다시 로그인 후 시도해주세요.';
-        case 'refused': return 'AI가 이 이미지에 대한 답변을 만들지 못했어요. 다른 스크린샷으로 시도해주세요.';
+        case 'refused': return 'AI가 답변을 만들지 못했어요. 질문을 조금 바꿔서 시도해주세요.';
         case 'empty_completion': return '답변을 받지 못했어요. 다시 시도해주세요.';
+        case 'prompt_too_large': return '내용이 너무 길어요. 조금 줄여서 다시 시도해주세요.';
         case 'cancelled': return '';
         default: return '일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
       }
     }
 
-    askBtn.addEventListener('click', async () => {
-      if (!chosenFile) return;
+    askBtn.addEventListener('click', async function(){
+      const typed = textInput ? textInput.value.trim() : '';
+      if (useImages && !chosenFile) return;
+      if (!useImages && !typed) { textInput.focus(); return; }
+
       askBtn.disabled = true;
       resultEl.hidden = true;
       statusEl.hidden = false;
-      statusText.textContent = '캐릭터창을 보는 중...';
+      statusText.textContent = useImages ? '캐릭터창을 보는 중...' : '생각하는 중...';
 
-      const prompt = [
-        "너는 모바일 방치형 RPG '그놈은 드래곤'을 잘 아는 코치야.",
-        "이 게임의 핵심 시스템: 환령(캐릭터) 수집·강화, 보구(장비) 착용, 성급공명(단계별 강화), 자동전투, 성장공유(파티 내 성장 공유).",
-        "첨부한 캐릭터창 스크린샷을 보고, 화면에서 실제로 보이는 레벨/등급/스탯/장착 아이템/단계 표시 등을 근거로 삼아서",
-        "지금 이 유저가 다음에 우선적으로 해야 할 일 2~4가지를 짧고 구체적으로 한국어 존댓말로 조언해줘.",
-        "화면에서 확인할 수 없는 내용은 추측해서 단정하지 말고 '화면상 확인이 안 돼요' 라고 솔직히 말해줘.",
-        "번호 목록 형태로, 각 항목 1~2문장으로 짧게 답해줘. 인사말이나 서론 없이 바로 목록부터 시작해줘."
-      ].join('\n');
+      const ctx = checkupContext();
+      const prompt = useImages
+        ? BASE + '\n\n첨부한 캐릭터창 스크린샷에서 실제로 보이는 레벨·등급·스탯·장착 상태를 근거로, 다음에 우선적으로 할 일을 짚어줘.' + ctx + '\n\n' + TAIL
+        : BASE + '\n\n아래는 이 사람이 직접 적은 상황이야. 여기에 맞춰 다음에 우선적으로 할 일을 짚어줘.' + ctx + '\n\n[사용자가 적은 상황]\n' + typed + '\n\n' + TAIL;
+
+      const opts = {
+        modelTier: 'default',
+        cache: false,
+        onText: function(u){
+          statusEl.hidden = true;
+          resultEl.hidden = false;
+          resultEl.textContent = u.text;
+        }
+      };
+      if (useImages) opts.images = chosenFile;
 
       try {
-        const { text } = await sample(prompt, {
-          images: chosenFile,
-          modelTier: 'default',
-          cache: false,
-          onText: ({ text }) => {
-            statusEl.hidden = true;
-            resultEl.hidden = false;
-            resultEl.textContent = text;
-          },
-        });
+        const r = await sample(prompt, opts);
         resultEl.hidden = false;
-        resultEl.textContent = text;
+        resultEl.textContent = r.text;
       } catch (e) {
         statusEl.hidden = true;
         const copy = errorCopy(e && e.code);
