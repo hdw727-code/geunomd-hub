@@ -459,6 +459,90 @@
     background:var(--ember-tint);border-radius:7px;padding:3px 9px;
     font-variant-numeric:tabular-nums;
   }
+
+  /* ---- self checkup ---- */
+  .chk-progress{
+    display:flex;align-items:center;gap:10px;
+    font-size:.82rem;color:var(--ink-soft);margin-bottom:14px;
+  }
+  .chk-bar{
+    flex:1;height:7px;border-radius:99px;background:var(--paper-2);
+    overflow:hidden;border:1px solid var(--line);
+  }
+  .chk-bar i{
+    display:block;height:100%;width:0%;border-radius:99px;
+    background:linear-gradient(90deg,var(--scale),var(--scale-strong));
+    transition:width .3s ease;
+  }
+  .chk-count{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700;color:var(--ink);}
+
+  .chk-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+  .chk-toggle{
+    width:100%;display:flex;align-items:center;gap:11px;text-align:left;
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;cursor:pointer;font:inherit;color:var(--ink);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .chk-toggle:hover{border-color:var(--scale);}
+  .chk-box{
+    width:21px;height:21px;border-radius:6px;flex:none;
+    border:1.8px solid var(--ink-faint);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .chk-box svg{width:13px;height:13px;opacity:0;transition:opacity .15s ease;}
+  .chk-row.on .chk-toggle{background:var(--scale-tint);border-color:var(--scale);}
+  .chk-row.on .chk-box{background:var(--scale);border-color:var(--scale);}
+  .chk-row.on .chk-box svg{opacity:1;color:#0B1512;}
+  .chk-label{font-size:.87rem;line-height:1.45;}
+  .chk-row.on .chk-label{color:var(--scale-strong);}
+
+  .chk-result{
+    margin-top:20px;background:var(--paper-raised);
+    border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);
+  }
+  .chk-result h3{font-size:1.05rem;margin-bottom:4px;}
+  .chk-result .lead{font-size:.82rem;color:var(--ink-faint);margin:0 0 14px;}
+  .chk-todo{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;}
+  .chk-todo li{display:grid;grid-template-columns:26px 1fr;gap:12px;align-items:start;}
+  .chk-rank{
+    width:26px;height:26px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Do Hyeon",sans-serif;font-size:.86rem;
+    background:var(--ember-tint);color:var(--ember-strong);
+  }
+  .chk-todo li:first-child .chk-rank{background:var(--ember);color:#1B1404;}
+  .chk-todo b{display:block;font-size:.88rem;margin-bottom:3px;}
+  .chk-todo p{margin:0;font-size:.81rem;color:var(--ink-soft);line-height:1.6;}
+  .chk-clear{
+    display:flex;gap:10px;align-items:center;
+    font-size:.88rem;color:var(--scale-strong);
+  }
+  .chk-clear svg{width:19px;height:19px;flex:none;}
+  .chk-more{font-size:.78rem;color:var(--ink-faint);margin:14px 0 0;}
+
+  /* ---- collapsible reference ---- */
+  details.ref-block{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:14px;
+    margin-bottom:11px;overflow:hidden;
+  }
+  details.ref-block > summary{
+    display:flex;align-items:center;gap:10px;
+    padding:14px 16px;cursor:pointer;list-style:none;
+    font-weight:700;font-size:.93rem;
+  }
+  details.ref-block > summary::-webkit-details-marker{display:none;}
+  details.ref-block > summary .ref-ic{
+    width:28px;height:28px;border-radius:8px;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--scale-tint);color:var(--scale-strong);
+  }
+  details.ref-block > summary .ref-ic svg{width:15px;height:15px;}
+  details.ref-block > summary .ref-hint{
+    margin-left:auto;font-size:.74rem;font-weight:400;color:var(--ink-faint);
+  }
+  details.ref-block[open] > summary{border-bottom:1px solid var(--line);}
+  .ref-body{padding:16px;}
+  .ref-body > *:first-child{margin-top:0;}
 </style>
 
 <div class="appbar">
@@ -479,9 +563,9 @@
     <a href="#gear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7l8-4 8 4v6c0 4.5-3.3 8.2-8 9-4.7-.8-8-4.5-8-9V7Z"/></svg>장비</a>
     <a href="#events"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>이벤트</a>
     <a href="#tips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.6.5 1 1.3 1 2.5h6c0-1.2.4-2 1-2.5A6 6 0 0 0 12 2Z"/></svg>초보팁</a>
+    <a href="#checkup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l2 2 4-4"/><path d="M21 12a9 9 0 1 1-4.2-7.6"/></svg>자가진단</a>
     <a href="#coupons"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4v-2a2 2 0 0 0 0-4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4Z"/></svg>쿠폰</a>
-    <a href="#commands"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13 5l-2 14"/></svg>명령어</a>
-    <a href="#hub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6Z"/></svg>자료</a>
+    <a href="#reference"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 0 4 22Z"/><path d="M4 19V5.5"/></svg>참고</a>
     <a href="#diagnosis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3.2"/><path d="M8 5l1.5-2h5L16 5"/></svg>진단</a>
   </div>
 </div>
@@ -857,6 +941,57 @@
     </div>
   </section>
 
+  <section id="checkup">
+    <div class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l2 2 4-4"/><path d="M21 12a9 9 0 1 1-4.2-7.6"/></svg>
+      자가진단
+    </div>
+    <h2>나는 지금 뭘 놓치고 있을까?</h2>
+    <p class="section-desc">이미 하고 있는 것만 눌러주세요. 남은 것 중에서 <b style="color:var(--ink)">지금 가장 먼저 챙길 것</b>을 순서대로 알려드릴게요.</p>
+
+    <div class="chk-progress">
+      <span class="chk-bar"><i id="chk-fill"></i></span>
+      <span class="chk-count" id="chk-count">9개 중 0개</span>
+    </div>
+
+    <ul class="chk-list" id="chk-list">
+      <li class="chk-row" data-key="form" data-title="전열부터 정리하기" data-adv="가장 먼저 고칠 곳이에요. 잘 버티는 수호자·전사를 앞에, 마법사·사수·성직자를 뒤로 보내세요. 재화가 전혀 안 드는데 효과는 제일 큽니다.">
+        <button class="chk-toggle" aria-pressed="false"><span class="chk-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span><span class="chk-label">전열에 수호자나 전사를 세웠다</span></button>
+      </li>
+      <li class="chk-row" data-key="lineage" data-title="드래곤 계열 통일하기" data-adv="원소·광야·지혜·성당·피안 중 하나로 통일해보세요. 등급 높은 환령을 이것저것 섞는 것보다, 계열을 맞추는 쪽이 나을 때가 많아요.">
+        <button class="chk-toggle" aria-pressed="false"><span class="chk-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span><span class="chk-label">파티를 같은 드래곤 계열로 묶었다</span></button>
+      </li>
+      <li class="chk-row" data-key="coupon" data-title="쿠폰 코드 등록하기" data-adv="위 쿠폰 섹션에서 코드를 탭하면 바로 복사돼요. 게임 안 쿠폰 등록창에 붙여넣기만 하면 됩니다. 공짜 재화를 흘려보내지 마세요.">
+        <button class="chk-toggle" aria-pressed="false"><span class="chk-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span><span class="chk-label">최근 쿠폰 코드를 등록했다</span></button>
+      </li>
+      <li class="chk-row" data-key="favor" data-title="호감도 올리기" data-adv="EX 환령은 호감도 20에서 조각 획득 확률이 100%가 돼요. 일반 환령은 10, 나머지는 8을 목표로 하면 호감도 탭에서 다이아 500개도 받습니다.">
+        <button class="chk-toggle" aria-pressed="false"><span class="chk-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span><span class="chk-label">호감도를 꾸준히 올리고 있다</span></button>
+      </li>
+      <li class="chk-row" data-key="magic" data-title="마법뽑 미리 모아두기" data-adv="3주 사이클 중 마법 이벤트가 900개로 제일 비싸요. 지금이 1·2주차라면 하루 20개씩 쌓아두세요. 미리 안 모으면 이번 바퀴는 통째로 넘어갑니다.">
+        <button class="chk-toggle" aria-pressed="false"><span class="chk-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span><span class="chk-label">마법뽑을 미리 모아두고 있다</span></button>
+      </li>
+      <li class="chk-row" data-key="star" data-title="성급공명 4단계 열기" data-adv="N등급 환령을 분해하면 나오는 슬라임 점액으로 4~6단계를 열 수 있어요. 부재료 환령이 부족할 때 특히 효율적입니다. 무별 달성 후엔 서약에 등록해 추가 버프까지 챙기세요.">
+        <button class="chk-toggle" aria-pressed="false"><span class="chk-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span><span class="chk-label">성급공명 4단계 이상을 뚫었다</span></button>
+      </li>
+      <li class="chk-row" data-key="rift" data-title="시간의 틈 마물 조각 모으기" data-adv="시즌 콘텐츠라 기간이 지나면 끝이에요. 마물 조각 90개 이상을 우선 목표로 잡으세요. 자원은 48시간까지 쌓이니 매일 접속 못 해도 괜찮습니다.">
+        <button class="chk-toggle" aria-pressed="false"><span class="chk-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span><span class="chk-label">시간의 틈에서 마물 조각을 모으고 있다</span></button>
+      </li>
+      <li class="chk-row" data-key="dungeon" data-title="요일 맞춰 장비 파밍하기" data-adv="요일마다 나오는 장비 부위가 달라요. 내가 자신 있는 보스가 걸리는 요일에 역전 휘장을 몰아 쓰면 같은 시간에 훨씬 많이 건집니다.">
+        <button class="chk-toggle" aria-pressed="false"><span class="chk-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span><span class="chk-label">장비 던전을 요일 맞춰 돌고 있다</span></button>
+      </li>
+      <li class="chk-row" data-key="guild" data-title="길드 탐험 돌기" data-adv="길드 본부로 워프한 뒤엔 시야에 들어온 약탈자나 보스를 직접 이동하지 않고 클릭만으로 칠 수 있어요. 탐험 도우미를 켜두면 자동 클리어도 됩니다.">
+        <button class="chk-toggle" aria-pressed="false"><span class="chk-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span><span class="chk-label">길드 탐험을 챙기고 있다</span></button>
+      </li>
+    </ul>
+
+    <div class="chk-result">
+      <h3 id="chk-title">지금 이것부터 하세요</h3>
+      <p class="lead" id="chk-lead">위에서 이미 하고 있는 항목을 눌러주세요.</p>
+      <ol class="chk-todo" id="chk-todo"></ol>
+      <p class="chk-more" id="chk-more" hidden></p>
+    </div>
+  </section>
+
   <section id="coupons">
     <div class="eyebrow">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4v-2a2 2 0 0 0 0-4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4Z"/><path d="M9 6v12" stroke-dasharray="2 2"/></svg>
@@ -889,12 +1024,16 @@
     <p class="coupon-note">코드는 등록 후 일정 기간이 지나면 만료돼요. 안 눌린다면 이미 만료됐거나 이미 받은 보상일 수 있어요 — 정확한 유효기간은 원본 페이지에서 확인해주세요.</p>
   </section>
 
-  <section id="commands">
+  <section id="reference">
     <div class="eyebrow">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13 5l-2 14"/></svg>
-      명령어 치트시트
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 0 4 22Z"/><path d="M4 19V5.5"/></svg>
+      참고 자료
     </div>
-    <h2>허브봇 &amp; 오픈채팅봇</h2>
+    <h2>필요할 때 펼쳐 보세요</h2>
+    <p class="section-desc">매번 볼 건 아니지만, 찾을 땐 여기 다 있어요.</p>
+    <details class="ref-block">
+      <summary><span class="ref-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13 5l-2 14"/></svg></span>허브봇 · 오픈채팅봇 명령어<span class="ref-hint">펼치기</span></summary>
+      <div class="ref-body">
     <p class="section-desc">채팅방 맨 앞에 아래 글자만 붙이면 바로 정보가 떠요. 항목별 세부 기능은 계속 추가·변경되니 방에서 직접 눌러보는 걸 추천해요.</p>
 
     <div class="cmd-group-label">허브봇 (디스코드·오픈채팅 공통)</div>
@@ -917,14 +1056,11 @@
       <span class="cmd-chip">/천상</span>
     </div>
     <div class="cmd-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex:none;vertical-align:-2px;margin-right:4px;"><path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.6.5 1 1.3 1 2.5h6c0-1.2.4-2 1-2.5A6 6 0 0 0 12 2Z"/></svg>채팅창에 <b>/</b> 만 입력해도 전체 명령어 목록이 떠요. 목록은 봇 운영자가 계속 늘려가는 중이라, 여기 적힌 것보다 더 많을 수 있어요.</div>
-  </section>
-
-  <section id="glossary">
-    <div class="eyebrow">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4Z"/><path d="M8 8h6M8 12h6"/></svg>
-      용어사전
-    </div>
-    <h2>알고 보면 쉬운 그놈드 용어</h2>
+      </div>
+    </details>
+    <details class="ref-block">
+      <summary><span class="ref-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4Z"/><path d="M8 8h6M8 12h6"/></svg></span>용어사전<span class="ref-hint">펼치기</span></summary>
+      <div class="ref-body">
     <p class="section-desc">허브봇·정보 사이트에서 계속 나오는 기본 시스템 용어만 먼저 정리했어요.</p>
     <div class="gloss-list">
       <div class="gloss-item"><div class="gloss-term">환령</div><div class="gloss-def">소환으로 얻는 <b>플레이어블 캐릭터</b>. 10연차마다 SR 이상, 40연차 내 SSR 이상이 보장돼요. 이 게임의 수집·육성 핵심 축이에요.</div></div>
@@ -934,14 +1070,11 @@
       <div class="gloss-item"><div class="gloss-term">자동전투</div><div class="gloss-def">스테이지를 <b>자동으로 진행</b>하는 전투 방식. 스토리를 일정 구간 진행하면 해금되고, 이후로는 직업군 기반 파티 구성이 중요해져요.</div></div>
       <div class="gloss-item"><div class="gloss-term">성장공유</div><div class="gloss-def">파티 내 <b>성장 수치를 함께 나누는</b> 구조. 특정 환령 하나만 집중 육성해도 파티 전체가 같이 강해져요.</div></div>
     </div>
-  </section>
-
-  <section id="hub">
-    <div class="eyebrow">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6Z"/></svg>
-      자료 허브
-    </div>
-    <h2>정보 사이트 8곳 모음</h2>
+      </div>
+    </details>
+    <details class="ref-block">
+      <summary><span class="ref-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6Z"/></svg></span>정보 사이트 8곳<span class="ref-hint">펼치기</span></summary>
+      <div class="ref-body">
     <p class="section-desc">언어·용도별로 정리했어요. 처음이라면 ①번 사이트 하나만 즐겨찾기해도 충분해요.</p>
 
     <div class="res-grid">
@@ -995,6 +1128,8 @@
       </a>
 
     </div>
+      </div>
+    </details>
   </section>
 
   <section id="diagnosis">
@@ -1007,7 +1142,7 @@
 
     <div class="diag-card">
       <div id="diag-unavailable" class="diag-unavailable" hidden>
-        이 진단 기능은 claude.ai 아티팩트 화면에서만 작동해요. 지금 보고 계신 화면에서는 쓸 수 없지만, 아래 다른 정보들은 그대로 이용하실 수 있어요.
+        이 AI 진단은 claude.ai 화면에서만 작동해요. 대신 위의 <a href="#checkup" style="color:var(--scale);">자가진단 체크리스트</a>는 여기서도 바로 쓸 수 있으니 그쪽을 이용해주세요.
       </div>
 
       <div id="diag-active">
@@ -1259,5 +1394,83 @@
       }
     });
   })();
+
+  // ---------- 자가진단 체크리스트 ----------
+  (function initCheckup(){
+    const list = document.getElementById('chk-list');
+    if (!list) return;
+    const rows  = Array.prototype.slice.call(list.querySelectorAll('.chk-row'));
+    const fill  = document.getElementById('chk-fill');
+    const count = document.getElementById('chk-count');
+    const title = document.getElementById('chk-title');
+    const lead  = document.getElementById('chk-lead');
+    const todoEl= document.getElementById('chk-todo');
+    const moreEl= document.getElementById('chk-more');
+    const KEY = 'geunomd-checkup-v1';
+
+    let state = {};
+    try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { state = {}; }
+
+    function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+    function render(){
+      const todo = [];
+      let done = 0;
+      rows.forEach(function(r){
+        const on = !!state[r.dataset.key];
+        r.classList.toggle('on', on);
+        r.querySelector('.chk-toggle').setAttribute('aria-pressed', on ? 'true' : 'false');
+        if (on) { done++; } else { todo.push(r); }
+      });
+
+      count.textContent = rows.length + '개 중 ' + done + '개';
+      fill.style.width = Math.round((done / rows.length) * 100) + '%';
+
+      todoEl.textContent = '';
+      moreEl.hidden = true;
+
+      if (todo.length === 0) {
+        title.textContent = '빠뜨린 게 없어요';
+        lead.textContent = '기본은 다 챙기고 계세요. 이제 편성을 다듬고 이벤트 사이클에 맞춰 재화를 굴리는 단계예요.';
+        return;
+      }
+
+      title.textContent = done === 0 ? '지금 이것부터 하세요' : '다음으로 챙길 것';
+      lead.textContent = '효과가 큰 순서예요. 위에서부터 하나씩만 해도 충분합니다.';
+
+      todo.slice(0, 3).forEach(function(r, i){
+        const li = document.createElement('li');
+        const rank = document.createElement('span');
+        rank.className = 'chk-rank';
+        rank.textContent = String(i + 1);
+        const box = document.createElement('div');
+        const b = document.createElement('b');
+        b.textContent = r.dataset.title;
+        const p = document.createElement('p');
+        p.textContent = r.dataset.adv;
+        box.appendChild(b); box.appendChild(p);
+        li.appendChild(rank); li.appendChild(box);
+        todoEl.appendChild(li);
+      });
+
+      if (todo.length > 3) {
+        moreEl.hidden = false;
+        moreEl.textContent = '나머지 ' + (todo.length - 3) + '개는 위 세 가지를 끝낸 뒤에 봐도 늦지 않아요.';
+      }
+    }
+
+    list.addEventListener('click', function(e){
+      const btn = e.target.closest('.chk-toggle');
+      if (!btn) return;
+      const row = btn.closest('.chk-row');
+      const key = row.dataset.key;
+      state[key] = !state[key];
+      save();
+      render();
+    });
+
+    render();
+  })();
+
 })();
 </script>
