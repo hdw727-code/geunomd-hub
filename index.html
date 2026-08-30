@@ -1,0 +1,873 @@
+<title>그놈드 정보허브</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gowun+Dodum&display=swap">
+<style>
+  /* 이 페이지는 어두운 "게임 컴패니언 앱" 톤 하나로 고정한 디자인이에요(라이트 모드 분기 없음) —
+     그놈은 드래곤의 밤하늘·드래곤 유적 분위기에 맞춘 의도적인 선택입니다. */
+  :root{
+    --paper:#0E1512;
+    --paper-raised:#182220;
+    --paper-2:#1F2B26;
+    --ink:#EDF3EE;
+    --ink-soft:#A9BFB2;
+    --ink-faint:#718A7C;
+    --line:#26362E;
+    --ember:#E4B65B;
+    --ember-strong:#F3CB7C;
+    --ember-tint:#3A2C15;
+    --scale:#3ED8AD;
+    --scale-strong:#79E8C6;
+    --scale-tint:#153B32;
+    --tag-kr:#3ED8AD;
+    --tag-en:#8CA6E8;
+    --tag-cn:#E58A97;
+    --tag-tool:#C79AEE;
+    --tag-comm:#E4B65B;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 16px 34px -14px rgba(0,0,0,.7);
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Gowun Dodum","Noto Sans KR",-apple-system,sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:"Do Hyeon","Gowun Dodum",sans-serif;
+    font-weight:400;
+    letter-spacing:.01em;
+    text-wrap:balance;
+    margin:0;
+  }
+  a{color:inherit;}
+  img{max-width:100%;}
+  [hidden]{display:none!important;}
+
+  .shell{max-width:640px;margin:0 auto;padding:0 0 64px;}
+
+  /* ---- App bar ---- */
+  .appbar{
+    position:sticky;top:0;z-index:20;
+    background:color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .appbar-inner{
+    max-width:640px;margin:0 auto;
+    display:flex;align-items:center;gap:10px;
+    padding:14px 18px;
+  }
+  .appbar .mark{
+    width:36px;height:36px;border-radius:11px;
+    background:linear-gradient(155deg,var(--ember) 0%, var(--ember-strong) 100%);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:var(--shadow);
+    flex:none;
+  }
+  .appbar .mark svg{width:20px;height:20px;}
+  .appbar-title{font-family:"Do Hyeon",sans-serif;font-size:1.18rem;letter-spacing:.01em;}
+  .appbar-sub{font-size:.68rem;color:var(--ink-faint);margin-top:1px;}
+  .beta-chip{
+    margin-left:auto;
+    font-size:.68rem;font-weight:700;color:var(--ember-strong);
+    background:var(--ember-tint);border:1px solid var(--ember);
+    border-radius:100px;padding:3px 9px;
+    white-space:nowrap;
+  }
+
+  /* ---- badge nav ---- */
+  .qnav{
+    display:flex;flex-wrap:wrap;gap:7px;
+    padding:0 18px 14px;
+    max-width:640px;margin:0 auto;
+  }
+  .qnav a{
+    display:flex;align-items:center;gap:5px;
+    font-size:.78rem;font-weight:600;
+    color:var(--ink-soft);
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:6px 11px;
+    text-decoration:none;
+  }
+  .qnav a svg{width:13px;height:13px;flex:none;color:var(--scale);}
+
+  /* ---- hero ---- */
+  .hero{padding-top:34px;position:relative;overflow:hidden;}
+  .hero-rings{
+    position:absolute;top:-60px;right:-90px;width:320px;height:320px;
+    border-radius:50%;pointer-events:none;
+    background:
+      radial-gradient(circle at center, transparent 0 118px, var(--line) 119px 120px, transparent 121px),
+      radial-gradient(circle at center, transparent 0 158px, var(--line) 159px 160px, transparent 161px);
+    opacity:.6;
+  }
+  .hero-kicker{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:.74rem;font-weight:700;color:var(--ember-strong);
+    background:var(--ember-tint);border:1px solid var(--ember);
+    border-radius:100px;padding:5px 12px;margin-bottom:14px;
+  }
+  .hero-kicker svg{width:13px;height:13px;}
+  .hero h1{
+    font-size:2.05rem;line-height:1.18;
+    text-wrap:balance;
+  }
+  .hero h1 em{
+    font-style:normal;color:var(--ember-strong);
+  }
+  .hero-sub{
+    font-size:.95rem;color:var(--ink-soft);margin-top:12px;max-width:46ch;
+  }
+  .hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+  .btn-primary, .btn-secondary{
+    font-family:"Do Hyeon",sans-serif;font-size:.95rem;letter-spacing:.01em;
+    padding:11px 18px;border-radius:11px;text-decoration:none;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .btn-primary{background:linear-gradient(155deg,var(--ember) 0%, var(--ember-strong) 100%);color:#1B1404;}
+  .btn-secondary{background:transparent;border:1px solid var(--line);color:var(--ink);}
+  .hero-caption{font-size:.74rem;color:var(--ink-faint);margin-top:14px;}
+
+  .hero-cluster{position:relative;height:150px;margin:28px 0 6px;}
+  .cluster-circle{
+    position:absolute;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--paper-2);border:1px solid var(--line);box-shadow:var(--shadow);
+  }
+  .cluster-circle svg{color:var(--scale);}
+  .cluster-stat{
+    position:absolute;right:6px;bottom:0;
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:13px;
+    padding:9px 13px;box-shadow:var(--shadow);
+    display:flex;align-items:baseline;gap:6px;
+  }
+  .cluster-stat b{font-family:"Do Hyeon",sans-serif;font-size:1.2rem;color:var(--ember-strong);}
+  .cluster-stat span{font-size:.72rem;color:var(--ink-faint);}
+
+  /* ---- generic section ---- */
+  section{padding:42px 20px 8px;}
+  .eyebrow{
+    display:flex;align-items:center;gap:7px;
+    font-size:.72rem;font-weight:700;letter-spacing:.09em;
+    color:var(--scale);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .eyebrow svg{width:14px;height:14px;flex:none;}
+  section h2{font-size:1.55rem;margin-bottom:8px;}
+  .section-desc{color:var(--ink-soft);font-size:.92rem;max-width:52ch;margin-bottom:22px;}
+
+  /* ---- hero fact card ---- */
+  .hero-card{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:20px 20px 18px;
+    box-shadow:var(--shadow);
+    margin:14px 0 4px;
+  }
+  .hero-lede{font-size:1rem;color:var(--ink-soft);margin-top:8px;}
+  .fact-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    margin-top:16px;
+  }
+  .fact{
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:12px;padding:10px 12px;
+  }
+  .fact .k{font-size:.68rem;color:var(--ink-faint);font-weight:700;letter-spacing:.04em;}
+  .fact .v{font-size:.88rem;margin-top:2px;font-weight:600;}
+
+  /* ---- glossary ---- */
+  .gloss-list{display:flex;flex-direction:column;gap:12px;}
+  .gloss-item{
+    display:grid;grid-template-columns:76px 1fr;gap:14px;
+    padding:14px 16px;
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:14px;
+    align-items:start;
+  }
+  .gloss-term{
+    font-weight:700;color:var(--scale-strong);font-size:.94rem;
+    background:var(--scale-tint);border-radius:8px;
+    padding:5px 6px;text-align:center;height:fit-content;
+  }
+  .gloss-def{font-size:.87rem;color:var(--ink-soft);}
+  .gloss-def b{color:var(--ink);font-weight:700;}
+
+  .cmd-note{
+    font-size:.82rem;color:var(--ink-faint);
+    background:var(--paper-raised);border:1px dashed var(--line);
+    border-radius:12px;padding:12px 14px;margin-top:14px;
+  }
+  .cmd-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  .cmd-chip{
+    font-family:"Do Hyeon",sans-serif;font-size:.86rem;
+    color:var(--ember-strong);background:var(--ember-tint);
+    border:1px solid var(--ember);border-radius:9px;
+    padding:6px 11px;
+  }
+  .cmd-group-label{font-size:.72rem;color:var(--ink-faint);font-weight:700;margin-top:16px;}
+
+  /* ---- coupons ---- */
+  .coupon-list{display:flex;flex-direction:column;gap:8px;}
+  .coupon-row{
+    display:flex;align-items:center;gap:10px;
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:11px;
+    padding:10px 12px;
+  }
+  .coupon-code{
+    font-family:"Do Hyeon",sans-serif;font-size:.92rem;letter-spacing:.02em;
+    color:var(--ink);flex:1;
+  }
+  .coupon-date{font-size:.7rem;color:var(--ink-faint);white-space:nowrap;}
+  .coupon-copy{
+    flex:none;font-size:.76rem;font-weight:700;
+    color:var(--scale-strong);background:var(--scale-tint);
+    border:1px solid var(--scale);border-radius:8px;
+    padding:6px 10px;cursor:pointer;white-space:nowrap;
+  }
+  .coupon-copy.copied{color:#0B1512;background:var(--scale);border-color:var(--scale);}
+  .coupon-note{font-size:.78rem;color:var(--ink-faint);margin-top:14px;}
+  .coupon-updated{font-size:.72rem;color:var(--ink-faint);margin-bottom:14px;}
+
+  /* ---- resource cards ---- */
+  .res-grid{display:flex;flex-direction:column;gap:14px;}
+  .res-card{
+    display:block;text-decoration:none;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px 18px;
+    box-shadow:var(--shadow);
+    transition:transform .15s ease, border-color .15s ease;
+  }
+  .res-card:active{transform:scale(.98);}
+  .res-top{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  .res-icon{
+    width:34px;height:34px;border-radius:10px;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--scale-tint);color:var(--scale-strong);
+  }
+  .res-icon svg{width:18px;height:18px;}
+  .res-name{font-weight:700;font-size:.98rem;flex:1;}
+  .res-go{color:var(--ink-faint);font-size:.9rem;}
+  .res-desc{font-size:.85rem;color:var(--ink-soft);margin-left:46px;}
+  .tag-row{display:flex;gap:6px;margin:10px 0 0 46px;flex-wrap:wrap;}
+  .tag{
+    font-size:.66rem;font-weight:700;letter-spacing:.02em;
+    border-radius:100px;padding:2px 9px;
+  }
+  .tag-kr{background:color-mix(in srgb, var(--tag-kr) 16%, transparent);color:var(--tag-kr);}
+  .tag-en{background:color-mix(in srgb, var(--tag-en) 16%, transparent);color:var(--tag-en);}
+  .tag-cn{background:color-mix(in srgb, var(--tag-cn) 16%, transparent);color:var(--tag-cn);}
+  .tag-tool{background:color-mix(in srgb, var(--tag-tool) 16%, transparent);color:var(--tag-tool);}
+  .tag-comm{background:color-mix(in srgb, var(--tag-comm) 16%, transparent);color:var(--tag-comm);}
+
+  /* ---- tips ---- */
+  .tip-list{display:flex;flex-direction:column;gap:14px;}
+  .tip{
+    display:grid;grid-template-columns:38px 1fr;gap:14px;
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:16px;
+    padding:16px 18px;
+  }
+  .tip-num{
+    font-family:"Do Hyeon",sans-serif;font-size:1.3rem;color:var(--scale);
+    line-height:1;
+  }
+  .tip h3{font-size:.95rem;margin-bottom:4px;}
+  .tip p{margin:0;font-size:.85rem;color:var(--ink-soft);}
+  .tip-src{display:block;margin-top:6px;font-size:.72rem;color:var(--ink-faint);}
+
+  /* ---- diagnosis ---- */
+  .diag-card{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:16px;
+    padding:18px 18px 20px;box-shadow:var(--shadow);
+  }
+  .diag-dropzone{
+    border:1.5px dashed var(--line);border-radius:12px;
+    padding:22px 16px;text-align:center;cursor:pointer;
+    background:var(--paper);transition:border-color .15s ease;
+  }
+  .diag-dropzone:hover{border-color:var(--scale);}
+  .diag-dropzone svg{width:26px;height:26px;color:var(--ink-faint);margin-bottom:6px;}
+  .diag-dropzone .dz-main{font-weight:700;font-size:.9rem;}
+  .diag-dropzone .dz-sub{font-size:.76rem;color:var(--ink-faint);margin-top:2px;}
+  .diag-preview{margin-top:14px;display:flex;gap:12px;align-items:center;}
+  .diag-preview img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--line);}
+  .diag-preview .fname{font-size:.8rem;color:var(--ink-soft);word-break:break-all;}
+  .diag-btn{
+    margin-top:14px;width:100%;
+    font-family:"Do Hyeon",sans-serif;font-size:1rem;letter-spacing:.02em;
+    background:linear-gradient(155deg,var(--scale) 0%, var(--scale-strong) 100%);
+    color:#fff;border:none;border-radius:11px;
+    padding:13px;cursor:pointer;
+  }
+  .diag-btn:disabled{opacity:.45;cursor:not-allowed;}
+  .diag-status{margin-top:14px;font-size:.85rem;color:var(--ink-soft);display:flex;align-items:center;gap:8px;}
+  .diag-spin{
+    width:14px;height:14px;border-radius:50%;flex:none;
+    border:2px solid var(--line);border-top-color:var(--scale);
+    animation:diag-spin .8s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .diag-spin{animation:none;} }
+  @keyframes diag-spin{to{transform:rotate(360deg);}}
+  .diag-result{
+    margin-top:14px;background:var(--scale-tint);border:1px solid var(--scale);
+    border-radius:12px;padding:14px 16px;font-size:.88rem;color:var(--ink);
+    white-space:pre-wrap;line-height:1.65;
+  }
+  .diag-note{font-size:.74rem;color:var(--ink-faint);margin-top:16px;}
+  .diag-unavailable{
+    font-size:.85rem;color:var(--ink-soft);
+    background:var(--paper);border:1px dashed var(--line);border-radius:12px;
+    padding:14px 16px;
+  }
+
+  /* ---- feedback ---- */
+  .fb-card{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:16px;
+    padding:18px;box-shadow:var(--shadow);
+  }
+  .fb-field{margin-bottom:12px;}
+  .fb-field label{display:block;font-size:.78rem;font-weight:700;color:var(--ink-soft);margin-bottom:6px;}
+  .fb-field select, .fb-field textarea{
+    width:100%;font:inherit;color:var(--ink);
+    background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px;resize:vertical;
+  }
+  .fb-field textarea{min-height:96px;}
+  .fb-btn{
+    width:100%;font-family:"Do Hyeon",sans-serif;font-size:1rem;
+    background:var(--scale);color:#fff;border:none;border-radius:11px;
+    padding:13px;cursor:pointer;
+  }
+  .fb-btn:disabled{opacity:.45;cursor:not-allowed;}
+  .fb-hint{font-size:.74rem;color:var(--ink-faint);margin-top:10px;}
+
+  /* ---- update log ---- */
+  .update-intro{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+  .done-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .done-chip{
+    font-size:.76rem;font-weight:700;color:var(--scale-strong);
+    background:var(--scale-tint);border-radius:100px;padding:5px 11px;
+  }
+  .log-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .log-item{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;
+  }
+  .log-date{font-size:.72rem;font-weight:700;color:var(--ember-strong);letter-spacing:.02em;}
+  .log-body{font-size:.85rem;color:var(--ink-soft);margin-top:3px;}
+
+  footer{
+    padding:34px 18px 10px;
+    color:var(--ink-faint);font-size:.76rem;
+    border-top:1px solid var(--line);margin-top:30px;
+  }
+  footer p{margin:0 0 8px;}
+  footer .src-list{display:flex;flex-wrap:wrap;gap:6px 10px;padding:0;margin:8px 0 0;list-style:none;}
+  footer .src-list a{color:var(--ink-faint);text-decoration:underline;text-decoration-color:var(--line);}
+
+  @media (min-width:560px){
+    .fact-grid{grid-template-columns:repeat(4,1fr);}
+  }
+</style>
+
+<div class="appbar">
+  <div class="appbar-inner">
+    <div class="mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15c2-6 6-10 12-11-1 3-1 5 0 7 2 1 4 1 6 0-3 5-7 8-13 9"/><circle cx="17" cy="7" r="1" fill="#fff" stroke="none"/><path d="M6 14c-1 2-1 4 0 6 2-1 4-3 5-5"/></svg>
+    </div>
+    <div>
+      <div class="appbar-title">그놈드 정보허브</div>
+      <div class="appbar-sub">그놈은 드래곤 · 비공식 자료 모음</div>
+    </div>
+    <span class="beta-chip">v3</span>
+  </div>
+  <div class="qnav">
+    <a href="#about"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>게임소개</a>
+    <a href="#glossary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4Z"/><path d="M8 8h6M8 12h6"/></svg>용어사전</a>
+    <a href="#hub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6Z"/></svg>자료허브</a>
+    <a href="#commands"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13 5l-2 14"/></svg>명령어</a>
+    <a href="#coupons"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4v-2a2 2 0 0 0 0-4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4Z"/></svg>쿠폰</a>
+    <a href="#tips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.6.5 1 1.3 1 2.5h6c0-1.2.4-2 1-2.5A6 6 0 0 0 12 2Z"/></svg>초보팁</a>
+    <a href="#diagnosis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3.2"/><path d="M8 5l1.5-2h5L16 5"/></svg>캐릭터 진단</a>
+    <a href="#feedback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v11H8l-4 4V5Z"/></svg>피드백</a>
+    <a href="#updates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>업데이트</a>
+  </div>
+</div>
+
+<div class="shell">
+
+  <section id="about" class="hero">
+    <div class="hero-rings"></div>
+    <span class="hero-kicker">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 8.3l6.1-.7L12 2Z"/></svg>
+      이제 막 시작한 당신을 위한
+    </span>
+    <h1>그놈은 드래곤,<br><em>무엇부터</em> 보면 될까요?</h1>
+    <p class="hero-sub">환령(캐릭터)을 모아 자동 전투로 성장하는 코미디 하렘 방치형 RPG예요. 흩어진 자료를 다 뒤지지 않아도, 여기서 용어부터 명령어까지 순서대로 훑어보세요.</p>
+    <div class="hero-cta">
+      <a class="btn-primary" href="#hub">자료 허브 보기 →</a>
+      <a class="btn-secondary" href="#diagnosis">캐릭터 진단 해보기</a>
+    </div>
+
+    <div class="hero-cluster" aria-hidden="true">
+      <div class="cluster-circle" style="width:64px;height:64px;left:2%;top:6px;"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.3l6.1-.7L12 3Z"/></svg></div>
+      <div class="cluster-circle" style="width:88px;height:88px;left:24%;top:0;"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 0 4 22Z"/><path d="M4 19V5.5"/></svg></div>
+      <div class="cluster-circle" style="width:58px;height:58px;left:52%;top:20px;"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.3"/><rect x="13" y="4" width="7" height="7" rx="1.3"/><rect x="4" y="13" width="7" height="7" rx="1.3"/><rect x="13" y="13" width="7" height="7" rx="1.3"/></svg></div>
+      <div class="cluster-circle" style="width:76px;height:76px;left:68%;top:56px;"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4l6 2 5-2v14l-5 2-6-2-5 2V6l5-2Z"/><path d="M9 4v14M15 6v14"/></svg></div>
+      <div class="cluster-stat"><b>8</b><span>정보 사이트<br>한곳에 정리</span></div>
+    </div>
+
+    <div class="hero-card">
+      <div class="fact-grid">
+        <div class="fact"><div class="k">장르</div><div class="v">방치형(AFK) RPG</div></div>
+        <div class="fact"><div class="k">개발/유통</div><div class="v">HongKong GameTree</div></div>
+        <div class="fact"><div class="k">글로벌 출시</div><div class="v">2026.01.13</div></div>
+        <div class="fact"><div class="k">핵심 축</div><div class="v">환령 · 자동전투 · 성장공유</div></div>
+      </div>
+    </div>
+    <p class="hero-caption">공식 사이트가 아닌, 커뮤니티 정보를 바탕으로 정리한 비공식 초보자용 화면이에요.</p>
+  </section>
+
+  <section id="glossary">
+    <div class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4Z"/><path d="M8 8h6M8 12h6"/></svg>
+      용어사전
+    </div>
+    <h2>알고 보면 쉬운 그놈드 용어</h2>
+    <p class="section-desc">허브봇·정보 사이트에서 계속 나오는 기본 시스템 용어만 먼저 정리했어요.</p>
+    <div class="gloss-list">
+      <div class="gloss-item"><div class="gloss-term">환령</div><div class="gloss-def">소환으로 얻는 <b>플레이어블 캐릭터</b>. 10연차마다 SR 이상, 40연차 내 SSR 이상이 보장돼요. 이 게임의 수집·육성 핵심 축이에요.</div></div>
+      <div class="gloss-item"><div class="gloss-term">도감</div><div class="gloss-def">환령·마물·드래곤 마법·아티팩트·유물 등을 종류별로 모아둔 <b>데이터베이스</b>. 정보 사이트마다 가장 먼저 찾게 되는 메뉴예요.</div></div>
+      <div class="gloss-item"><div class="gloss-term">보구</div><div class="gloss-def">환령에게 채워주는 <b>장비형 아이템</b>. 클래스·환령별 추천 조합이 갈리는 편이라 도감에서 미리 확인하는 걸 추천해요.</div></div>
+      <div class="gloss-item"><div class="gloss-term">성급공명</div><div class="gloss-def">환령을 단계별로 <b>강화하는 성장 시스템</b>. 4~6단계부터는 N등급 환령을 분해해 얻는 슬라임 점액으로 해금할 수 있어요.</div></div>
+      <div class="gloss-item"><div class="gloss-term">자동전투</div><div class="gloss-def">스테이지를 <b>자동으로 진행</b>하는 전투 방식. 스토리를 일정 구간 진행하면 해금되고, 이후로는 직업군 기반 파티 구성이 중요해져요.</div></div>
+      <div class="gloss-item"><div class="gloss-term">성장공유</div><div class="gloss-def">파티 내 <b>성장 수치를 함께 나누는</b> 구조. 특정 환령 하나만 집중 육성해도 파티 전체가 같이 강해져요.</div></div>
+    </div>
+  </section>
+
+  <section id="hub">
+    <div class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6Z"/></svg>
+      자료 허브
+    </div>
+    <h2>정보 사이트 8곳 모음</h2>
+    <p class="section-desc">언어·용도별로 정리했어요. 처음이라면 ①번 사이트 하나만 즐겨찾기해도 충분해요.</p>
+
+    <div class="res-grid">
+
+      <a class="res-card" href="https://dt.ghylabs.com/" target="_blank" rel="noopener">
+        <div class="res-top"><div class="res-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.3l6.1-.7L12 3Z"/></svg></div><div class="res-name">그놈드 허브</div><div class="res-go">↗</div></div>
+        <div class="res-desc">그니님이 운영하는 한국어 종합 정보 사이트. 환령 도감 81종, 마물 도감 158종, 드래곤 마법·아티팩트·유물, 서버 랭킹, 덱 공략까지 한 곳에서 볼 수 있어요. 허브봇 데이터의 원출처.</div>
+        <div class="tag-row"><span class="tag tag-kr">한국어</span><span class="tag tag-kr">메인 추천</span></div>
+      </a>
+
+      <a class="res-card" href="https://dt.ghylabs.com/guides/treasure-hunt" target="_blank" rel="noopener">
+        <div class="res-top"><div class="res-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4l6 2 5-2v14l-5 2-6-2-5 2V6l5-2Z"/><path d="M9 4v14M15 6v14"/></svg></div><div class="res-name">삽질(보물탐험) 이벤트 가이드</div><div class="res-go">↗</div></div>
+        <div class="res-desc">'드래곤 컴패니언의 길' 이벤트 전용 시뮬레이터. 1,043칸 전체 경로를 Prev/Next로 한 칸씩 안내하고 삽·폭탄·로켓 사용 효율도 같이 보여줘요. 이벤트 시작 직후엔 베타 버전이니, 커뮤니티 검증이 끝난 뒤 따라가는 걸 추천해요.</div>
+        <div class="tag-row"><span class="tag tag-kr">한국어</span><span class="tag tag-comm">이벤트 전용</span></div>
+      </a>
+
+      <a class="res-card" href="https://buly.kr/2Jqk7XL" target="_blank" rel="noopener">
+        <div class="res-top"><div class="res-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg></div><div class="res-name">대만 정보 시트 번역판</div><div class="res-go">↗</div></div>
+        <div class="res-desc">대만 정보 구글시트 제작자와 협업해 번역·보강한 시트예요. 계속 다듬어지는 중이라 피드백을 특히 반기는 자료예요.</div>
+        <div class="tag-row"><span class="tag tag-kr">한국어 번역</span><span class="tag tag-tool">구글시트</span></div>
+      </a>
+
+      <a class="res-card" href="https://mifsbt.github.io/ZRbj/" target="_blank" rel="noopener">
+        <div class="res-top"><div class="res-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.3"/><rect x="13" y="4" width="7" height="7" rx="1.3"/><rect x="4" y="13" width="7" height="7" rx="1.3"/><rect x="13" y="13" width="7" height="7" rx="1.3"/></svg></div><div class="res-name">덱 편성 시뮬레이터</div><div class="res-go">↗</div></div>
+        <div class="res-desc">환령을 드래그해서 편성을 직접 짜볼 수 있는 도구예요. 덱 갈피가 안 잡힐 때 이것저것 조합해보기 좋아요.</div>
+        <div class="tag-row"><span class="tag tag-tool">도구</span></div>
+      </a>
+
+      <a class="res-card" href="https://www.gamekee.com/lhlr/" target="_blank" rel="noopener">
+        <div class="res-top"><div class="res-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 0 4 22Z"/><path d="M4 19V5.5"/></svg></div><div class="res-name">gamekee 중국 위키</div><div class="res-go">↗</div></div>
+        <div class="res-desc">중국 쪽 그놈드 위키예요. 번역기로 봐도 구조가 단순해서 읽기 편하고, 초보자 가이드가 잘 정리돼 있어요.</div>
+        <div class="tag-row"><span class="tag tag-cn">중국어</span></div>
+      </a>
+
+      <a class="res-card" href="https://dtwiki.org/" target="_blank" rel="noopener">
+        <div class="res-top"><div class="res-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 0 4 22Z"/><path d="M4 19V5.5"/></svg></div><div class="res-name">DT Wiki</div><div class="res-go">↗</div></div>
+        <div class="res-desc">티어리스트 생성기·팀 빌더·미니게임까지 갖춘 영문 위키예요. PvE·PvP 팀 구성이 따로 정리돼 있어요.</div>
+        <div class="tag-row"><span class="tag tag-en">영어</span></div>
+      </a>
+
+      <a class="res-card" href="https://www.hideoutgacha.com/games/dragon-traveler" target="_blank" rel="noopener">
+        <div class="res-top"><div class="res-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 0 4 22Z"/><path d="M4 19V5.5"/></svg></div><div class="res-name">Hideout Gacha 위키</div><div class="res-go">↗</div></div>
+        <div class="res-desc">캐릭터 빌드, 데이터베이스, 진행 가이드, 계산기, 이벤트 도구를 갖춘 또 다른 영문 위키예요.</div>
+        <div class="tag-row"><span class="tag tag-en">영어</span></div>
+      </a>
+
+      <a class="res-card" href="https://discord.gg/tRQhpYkka" target="_blank" rel="noopener">
+        <div class="res-top"><div class="res-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4V5Z"/></svg></div><div class="res-name">디스코드 커뮤니티</div><div class="res-go">↗</div></div>
+        <div class="res-desc">톡방에서 함께 운영하는 디스코드 서버예요. 정보와 일러스트가 자주 공유돼요.</div>
+        <div class="tag-row"><span class="tag tag-comm">커뮤니티</span></div>
+      </a>
+
+    </div>
+  </section>
+
+  <section id="commands">
+    <div class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13 5l-2 14"/></svg>
+      명령어 치트시트
+    </div>
+    <h2>허브봇 &amp; 오픈채팅봇</h2>
+    <p class="section-desc">채팅방 맨 앞에 아래 글자만 붙이면 바로 정보가 떠요. 항목별 세부 기능은 계속 추가·변경되니 방에서 직접 눌러보는 걸 추천해요.</p>
+
+    <div class="cmd-group-label">허브봇 (디스코드·오픈채팅 공통)</div>
+    <div class="cmd-grid">
+      <span class="cmd-chip">!도움말</span>
+    </div>
+    <p style="font-size:.82rem;color:var(--ink-soft);margin-top:6px;">전체 명령어 목록을 바로 보여줘요. 시작은 항상 이 명령어로.</p>
+
+    <div class="cmd-group-label">오픈채팅봇 (/ 로 시작)</div>
+    <div class="cmd-grid">
+      <span class="cmd-chip">/경매</span>
+      <span class="cmd-chip">/내실</span>
+      <span class="cmd-chip">/보구</span>
+      <span class="cmd-chip">/성급</span>
+      <span class="cmd-chip">/신격</span>
+      <span class="cmd-chip">/황클</span>
+      <span class="cmd-chip">/상점</span>
+      <span class="cmd-chip">/용</span>
+      <span class="cmd-chip">/파견</span>
+      <span class="cmd-chip">/천상</span>
+    </div>
+    <div class="cmd-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex:none;vertical-align:-2px;margin-right:4px;"><path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.6.5 1 1.3 1 2.5h6c0-1.2.4-2 1-2.5A6 6 0 0 0 12 2Z"/></svg>채팅창에 <b>/</b> 만 입력해도 전체 명령어 목록이 떠요. 목록은 봇 운영자가 계속 늘려가는 중이라, 여기 적힌 것보다 더 많을 수 있어요.</div>
+  </section>
+
+  <section id="coupons">
+    <div class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4v-2a2 2 0 0 0 0-4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4Z"/><path d="M9 6v12" stroke-dasharray="2 2"/></svg>
+      쿠폰 코드
+    </div>
+    <h2>탭하면 바로 복사돼요</h2>
+    <p class="section-desc"><a href="https://dt.ghylabs.com/coupons" target="_blank" rel="noopener" style="color:var(--scale);text-decoration:underline;">그놈드 허브 쿠폰 페이지</a>에서 확인한 최근 30일 코드예요. 게임 안 상점 · 이벤트 메뉴의 쿠폰 등록창에 붙여넣기만 하면 돼요.</p>
+    <div class="coupon-updated">마지막 확인: 2026.08.30 · 총 19개</div>
+    <ul class="coupon-list" id="coupon-list">
+      <li class="coupon-row"><span class="coupon-code">DHZSGUIDE</span><span class="coupon-date">8/30</span><button class="coupon-copy" data-code="DHZSGUIDE">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">DHZSPLMXS</span><span class="coupon-date">8/30</span><button class="coupon-copy" data-code="DHZSPLMXS">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">LILITHGUIDE</span><span class="coupon-date">8/28</span><button class="coupon-copy" data-code="LILITHGUIDE">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">RINGUIDE</span><span class="coupon-date">8/27</span><button class="coupon-copy" data-code="RINGUIDE">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">RINPFSX</span><span class="coupon-date">8/25</span><button class="coupon-copy" data-code="RINPFSX">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">RINLBM</span><span class="coupon-date">8/24</span><button class="coupon-copy" data-code="RINLBM">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">PROMETHEUS</span><span class="coupon-date">8/22</span><button class="coupon-copy" data-code="PROMETHEUS">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">OBONYASUMI</span><span class="coupon-date">8/21</span><button class="coupon-copy" data-code="OBONYASUMI">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">BUFFETBZ88</span><span class="coupon-date">8/20</span><button class="coupon-copy" data-code="BUFFETBZ88">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">GXGGLSMWLBM</span><span class="coupon-date">8/18</span><button class="coupon-copy" data-code="GXGGLSMWLBM">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">LSMWGUIDE</span><span class="coupon-date">8/13</span><button class="coupon-copy" data-code="LSMWGUIDE">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">HITOMI</span><span class="coupon-date">8/11</span><button class="coupon-copy" data-code="HITOMI">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">BUFFETOSHI</span><span class="coupon-date">8/10</span><button class="coupon-copy" data-code="BUFFETOSHI">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">CHAOSWARLORD</span><span class="coupon-date">8/10</span><button class="coupon-copy" data-code="CHAOSWARLORD">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">BUFFBUFF</span><span class="coupon-date">8/7</span><button class="coupon-copy" data-code="BUFFBUFF">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">COSVNS</span><span class="coupon-date">8/6</span><button class="coupon-copy" data-code="COSVNS">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">COSVVA</span><span class="coupon-date">8/5</span><button class="coupon-copy" data-code="COSVVA">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">COSIFRIT</span><span class="coupon-date">8/4</span><button class="coupon-copy" data-code="COSIFRIT">복사</button></li>
+      <li class="coupon-row"><span class="coupon-code">COSYUZAOQ</span><span class="coupon-date">8/3</span><button class="coupon-copy" data-code="COSYUZAOQ">복사</button></li>
+    </ul>
+    <p class="coupon-note">코드는 등록 후 일정 기간이 지나면 만료돼요. 안 눌린다면 이미 만료됐거나 이미 받은 보상일 수 있어요 — 정확한 유효기간은 원본 페이지에서 확인해주세요.</p>
+  </section>
+
+  <section id="tips">
+    <div class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.6.5 1 1.3 1 2.5h6c0-1.2.4-2 1-2.5A6 6 0 0 0 12 2Z"/></svg>
+      초보자 꿀팁
+    </div>
+    <h2>시작할 때 알아두면 좋은 5가지</h2>
+    <div class="tip-list">
+      <div class="tip"><div class="tip-num">1</div><div>
+        <h3>시간의 틈, 서두르지 않아도 돼요</h3>
+        <p>약 2개월짜리 시즌 콘텐츠예요. 자원은 최대 48시간까지 쌓이니 이틀에 한 번 몰아서 받아도 무방하고, 막히는 구간은 저녁 시간대에 재시도하면 난이도 보정을 받기 쉬워요. 40일 내 클리어를 목표로, 마물 조각은 90개 이상 먼저 확보하세요.</p>
+      </div></div>
+      <div class="tip"><div class="tip-num">2</div><div>
+        <h3>성급공명 4~6단계는 슬라임 점액으로</h3>
+        <p>N등급 환령을 분해하면 나오는 슬라임 점액으로 4~6단계를 해금할 수 있어요. 부재료 환령이 부족할 때 특히 효율적이고, 별 목표를 달성하면 서약에 등록해 추가 능력치 버프도 챙길 수 있어요.</p>
+      </div></div>
+      <div class="tip"><div class="tip-num">3</div><div>
+        <h3>호감도는 조용한 재화 창구</h3>
+        <p>EX 환령은 호감도 20을 찍으면 조각 획득 확률이 100%가 돼요. 일반 환령은 10레벨, 나머지는 8레벨을 목표로 하면 호감도 탭에서 다이아 500개를 챙길 수 있어요.</p>
+      </div></div>
+      <div class="tip"><div class="tip-num">4</div><div>
+        <h3>길드 탐험은 클릭 한 번으로</h3>
+        <p>길드 본부로 워프한 뒤, 시야가 확보된 약탈자나 보스는 직접 이동하지 않고 클릭만으로 공격할 수 있어요. 탐험 도우미를 켜두면 자동 클리어도 가능해요.</p>
+      </div></div>
+      <div class="tip"><div class="tip-num">5</div><div>
+        <h3>장비 던전은 요일별로 다르게</h3>
+        <p>요일마다 드랍 장비가 달라요. 내가 강한 보스가 걸리는 요일에 역전 휘장을 써서 몰아 파밍하고, 보스별 추천 환령·덱 구성으로 생존력과 딜량 균형을 맞추세요.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section id="diagnosis">
+    <div class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3.2"/><path d="M8 5l1.5-2h5L16 5"/></svg>
+      캐릭터 진단
+    </div>
+    <h2>내 캐릭터창, 뭐부터 키우면 될까?</h2>
+    <p class="section-desc">캐릭터창(환령 정보·스탯·보구 화면)을 캡처해서 올리면 AI가 화면을 보고 다음 우선순위를 짚어줘요.</p>
+
+    <div class="diag-card">
+      <div id="diag-unavailable" class="diag-unavailable" hidden>
+        이 진단 기능은 claude.ai 아티팩트 화면에서만 작동해요. 지금 보고 계신 화면에서는 쓸 수 없지만, 아래 다른 정보들은 그대로 이용하실 수 있어요.
+      </div>
+
+      <div id="diag-active">
+        <label class="diag-dropzone" for="char-file">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+          <div class="dz-main">캐릭터창 스크린샷 올리기</div>
+          <div class="dz-sub">탭해서 사진 선택</div>
+        </label>
+        <input type="file" id="char-file" accept="image/*" style="display:none;">
+
+        <div id="diag-preview" class="diag-preview" hidden>
+          <img id="diag-preview-img" alt="업로드한 캐릭터창 미리보기">
+          <div class="fname" id="diag-fname"></div>
+        </div>
+
+        <button id="diag-ask-btn" class="diag-btn" disabled>이 캐릭터 진단받기</button>
+
+        <div id="diag-status" class="diag-status" hidden>
+          <span class="diag-spin"></span><span id="diag-status-text">보는 중...</span>
+        </div>
+        <div id="diag-result" class="diag-result" hidden></div>
+      </div>
+
+      <p class="diag-note">AI가 화면에 보이는 정보만으로 참고용 조언을 드려요. 게임 내 정확한 최적해와 다를 수 있으니 참고로만 봐주세요. 첫 진단 시 클로드 사용 동의가 한 번 필요해요.</p>
+    </div>
+  </section>
+
+  <section id="feedback">
+    <div class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v11H8l-4 4V5Z"/></svg>
+      피드백
+    </div>
+    <h2>틀린 정보나 원하는 기능이 있다면</h2>
+    <p class="section-desc">보내주신 내용은 이메일로 바로 도착해요. 답장이 필요하면 연락처도 함께 남겨주세요.</p>
+
+    <form id="feedback-form" class="fb-card">
+      <div class="fb-field">
+        <label for="fb-type">종류</label>
+        <select id="fb-type">
+          <option>잘못된 정보 제보</option>
+          <option>새 기능 제안</option>
+          <option>사이트/명령어 추가 제보</option>
+          <option>기타</option>
+        </select>
+      </div>
+      <div class="fb-field">
+        <label for="fb-body">내용</label>
+        <textarea id="fb-body" placeholder="예) 성급공명 설명에 오타가 있어요 / 이런 사이트도 추가해주세요" required></textarea>
+      </div>
+      <button type="submit" class="fb-btn">이메일로 보내기</button>
+      <p class="fb-hint">버튼을 누르면 기기의 메일 앱이 열리고 내용이 미리 채워져요. 메일 앱이 없다면 캡처해서 디스코드에 남겨주셔도 돼요.</p>
+    </form>
+  </section>
+
+  <section id="updates">
+    <div class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+      업데이트 로그
+    </div>
+    <h2>계속 자라는 중이에요</h2>
+    <div class="update-intro">
+      <p class="section-desc" style="margin-bottom:0;">이번 업데이트로 아래 기능이 새로 생겼어요. 매주 원본 사이트를 다시 확인해서 바뀐 내용도 이어서 반영할게요.</p>
+      <div class="done-row">
+        <span class="done-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;flex:none;vertical-align:-1px;margin-right:3px;"><path d="M4 12l5 5L20 6"/></svg>캐릭터 진단</span>
+        <span class="done-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;flex:none;vertical-align:-1px;margin-right:3px;"><path d="M4 12l5 5L20 6"/></svg>피드백 보내기</span>
+        <span class="done-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;flex:none;vertical-align:-1px;margin-right:3px;"><path d="M4 12l5 5L20 6"/></svg>주간 자동 확인</span>
+      </div>
+    </div>
+    <ul class="log-list" id="update-log">
+      <li class="log-item">
+        <div class="log-date">2026.08.30</div>
+        <div class="log-body">v2 — 캐릭터 진단, 피드백 보내기, 업데이트 로그 추가. 매주 원본 사이트를 다시 확인하는 자동 점검을 시작했어요.</div>
+      </li>
+      <li class="log-item">
+        <div class="log-date">2026.08.30</div>
+        <div class="log-body">v1 — 정보 사이트 8곳, 용어사전, 명령어 치트시트, 초보자 꿀팁으로 첫 공개.</div>
+      </li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>비공식 팬 제작 정보 허브예요. 위 커뮤니티·위키 운영자분들께 감사드려요. 쿠폰 코드처럼 자주 바뀌는 정보는 원본 사이트에서 최신 내용을 확인해주세요. (2026년 8월 기준 정리, 매주 자동 점검)</p>
+    <ul class="src-list">
+      <li><a href="https://dt.ghylabs.com/" target="_blank" rel="noopener">그놈드 허브</a></li>
+      <li><a href="https://buly.kr/2Jqk7XL" target="_blank" rel="noopener">대만시트 번역판</a></li>
+      <li><a href="https://www.gamekee.com/lhlr/" target="_blank" rel="noopener">gamekee</a></li>
+      <li><a href="https://mifsbt.github.io/ZRbj/" target="_blank" rel="noopener">덱 빌더</a></li>
+      <li><a href="https://www.hideoutgacha.com/games/dragon-traveler" target="_blank" rel="noopener">Hideout Gacha</a></li>
+      <li><a href="https://dtwiki.org/" target="_blank" rel="noopener">DT Wiki</a></li>
+      <li><a href="https://discord.gg/tRQhpYkka" target="_blank" rel="noopener">디스코드</a></li>
+    </ul>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- 캐릭터 진단 ----------
+  (async function initDiagnosis(){
+    const unavailableEl = document.getElementById('diag-unavailable');
+    const activeEl = document.getElementById('diag-active');
+    const fileInput = document.getElementById('char-file');
+    const dropzone = document.querySelector('.diag-dropzone');
+    const previewWrap = document.getElementById('diag-preview');
+    const previewImg = document.getElementById('diag-preview-img');
+    const fnameEl = document.getElementById('diag-fname');
+    const askBtn = document.getElementById('diag-ask-btn');
+    const statusEl = document.getElementById('diag-status');
+    const statusText = document.getElementById('diag-status-text');
+    const resultEl = document.getElementById('diag-result');
+
+    function showUnavailable(){
+      activeEl.hidden = true;
+      unavailableEl.hidden = false;
+    }
+
+    let sample;
+    try {
+      sample = await claude.use('sample');
+    } catch (e) {
+      sample = null;
+    }
+    if (!sample) { showUnavailable(); return; }
+
+    let caps = null;
+    try { caps = await sample.limits(); } catch (e) { caps = null; }
+    if (!caps || !caps.images) { showUnavailable(); return; }
+    fileInput.accept = caps.images.mediaTypes.join(',');
+
+    let chosenFile = null;
+
+    fileInput.addEventListener('change', () => {
+      const f = fileInput.files && fileInput.files[0];
+      if (!f) return;
+      chosenFile = f;
+      previewImg.src = URL.createObjectURL(f);
+      fnameEl.textContent = f.name;
+      previewWrap.hidden = false;
+      askBtn.disabled = false;
+      resultEl.hidden = true;
+      statusEl.hidden = true;
+    });
+
+    function errorCopy(code){
+      switch(code){
+        case 'not_granted': return '클로드 사용 동의가 필요해요. 다시 시도하면서 허용을 눌러주세요.';
+        case 'image_rejected': return '이 이미지는 읽을 수 없었어요. 다른 스크린샷으로 다시 시도해주세요.';
+        case 'images_unavailable': return '이 화면에서는 이미지 진단을 쓸 수 없어요.';
+        case 'rate_limited': return '요청이 몰렸어요. 잠시 후 다시 시도해주세요.';
+        case 'session_expired': return '로그인이 만료됐어요. 다시 로그인 후 시도해주세요.';
+        case 'refused': return 'AI가 이 이미지에 대한 답변을 만들지 못했어요. 다른 스크린샷으로 시도해주세요.';
+        case 'empty_completion': return '답변을 받지 못했어요. 다시 시도해주세요.';
+        case 'cancelled': return '';
+        default: return '일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
+      }
+    }
+
+    askBtn.addEventListener('click', async () => {
+      if (!chosenFile) return;
+      askBtn.disabled = true;
+      resultEl.hidden = true;
+      statusEl.hidden = false;
+      statusText.textContent = '캐릭터창을 보는 중...';
+
+      const prompt = [
+        "너는 모바일 방치형 RPG '그놈은 드래곤'을 잘 아는 코치야.",
+        "이 게임의 핵심 시스템: 환령(캐릭터) 수집·강화, 보구(장비) 착용, 성급공명(단계별 강화), 자동전투, 성장공유(파티 내 성장 공유).",
+        "첨부한 캐릭터창 스크린샷을 보고, 화면에서 실제로 보이는 레벨/등급/스탯/장착 아이템/단계 표시 등을 근거로 삼아서",
+        "지금 이 유저가 다음에 우선적으로 해야 할 일 2~4가지를 짧고 구체적으로 한국어 존댓말로 조언해줘.",
+        "화면에서 확인할 수 없는 내용은 추측해서 단정하지 말고 '화면상 확인이 안 돼요' 라고 솔직히 말해줘.",
+        "번호 목록 형태로, 각 항목 1~2문장으로 짧게 답해줘. 인사말이나 서론 없이 바로 목록부터 시작해줘."
+      ].join('\n');
+
+      try {
+        const { text } = await sample(prompt, {
+          images: chosenFile,
+          modelTier: 'default',
+          cache: false,
+          onText: ({ text }) => {
+            statusEl.hidden = true;
+            resultEl.hidden = false;
+            resultEl.textContent = text;
+          },
+        });
+        resultEl.hidden = false;
+        resultEl.textContent = text;
+      } catch (e) {
+        statusEl.hidden = true;
+        const copy = errorCopy(e && e.code);
+        if (copy) {
+          resultEl.hidden = false;
+          resultEl.textContent = (e && e.text ? e.text + '\n\n' : '') + '⚠️ ' + copy;
+        }
+      } finally {
+        askBtn.disabled = false;
+      }
+    });
+  })();
+
+  // ---------- 피드백 (mailto) ----------
+  (function initFeedback(){
+    const form = document.getElementById('feedback-form');
+    if (!form) return;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const type = document.getElementById('fb-type').value;
+      const body = document.getElementById('fb-body').value.trim();
+      if (!body) return;
+      const subject = encodeURIComponent('[그놈드 정보허브 피드백] ' + type);
+      const fullBody = body + '\n\n---\n종류: ' + type;
+      const mailto = 'mailto:hdw727@gmail.com?subject=' + subject + '&body=' + encodeURIComponent(fullBody);
+      window.location.href = mailto;
+    });
+  })();
+
+  // ---------- 쿠폰 코드 복사 ----------
+  (function initCoupons(){
+    const list = document.getElementById('coupon-list');
+    if (!list) return;
+
+    function fallbackCopy(text){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+
+    list.addEventListener('click', (e) => {
+      const btn = e.target.closest('.coupon-copy');
+      if (!btn) return;
+      const code = btn.dataset.code;
+      const done = () => {
+        const original = '복사';
+        btn.textContent = '복사됨!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(done).catch(() => { fallbackCopy(code); done(); });
+      } else {
+        fallbackCopy(code);
+        done();
+      }
+    });
+  })();
+})();
+</script>
