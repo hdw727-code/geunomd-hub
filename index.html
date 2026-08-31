@@ -439,6 +439,9 @@
   .callout svg{width:16px;height:16px;flex:none;color:var(--ember-strong);margin-top:2px;}
   .callout p{margin:0;font-size:.83rem;color:var(--ink);line-height:1.6;}
   .callout b{color:var(--ember-strong);}
+  .callout.callout-warn{background:#3A1A18;border-color:#B4544A;}
+  .callout.callout-warn svg{color:#FF9C8F;}
+  .callout.callout-warn b{color:#FF9C8F;}
 
   /* ---- event cycle rows ---- */
   .cycle-list{display:flex;flex-direction:column;gap:11px;margin-top:16px;}
@@ -817,7 +820,7 @@
       이벤트 사이클
     </div>
     <h2>3주에 한 바퀴, 미리 모아두기</h2>
-    <p class="section-desc">이벤트는 세 종류가 <b style="color:var(--ink)">각 7일씩, 21일 주기</b>로 돌아와요. 이걸 알면 재화를 아무 때나 쓰지 않고, 내 차례가 올 때까지 모아둘 수 있어요.</p>
+    <p class="section-desc">이벤트는 세 종류가 <b style="color:var(--ink)">각 7일씩, 21일 주기</b>로 돌아와요. 이걸 알면 <b style="color:var(--ink)">뽑기 티켓</b>을 아무 때나 쓰지 않고, 내 차례가 올 때까지 모아둘 수 있어요.</p>
 
     <div class="fig-card">
       <figure>
@@ -855,8 +858,13 @@
 
           <text x="180" y="292" text-anchor="middle" font-size="13.5" fill="currentColor" opacity=".6">21일 뒤 이 표가 그대로 반복돼요</text>
         </svg>
-        <figcaption>세 줄은 각각 게임 안의 <b>마물 연성 · 아티팩트 소환 · 마법 창조</b> 메뉴에서 쓰는 뽑기 재화예요. 마법 창조가 <b>900개로 유독 비싸서</b>, 앞의 두 주 동안 그 재화를 쌓아두는 게 이 사이클의 핵심입니다.</figcaption>
+        <figcaption>세 줄은 각각 <b>마물 연성 · 아티팩트 소환 · 마법 창조</b>에 쓰는 <b>뽑기 티켓</b>이에요. 여기서 말하는 &ldquo;재화&rdquo;가 바로 그 뽑기 티켓입니다. 마법 창조가 <b>900개로 유독 비싸서</b>, 앞의 두 주 동안 그 티켓을 쌓아두는 게 이 사이클의 핵심이에요.</figcaption>
       </figure>
+    </div>
+
+    <div class="callout callout-warn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4.5"/><circle cx="12" cy="17" r=".7" fill="currentColor"/><path d="M10.3 3.6 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0Z"/></svg>
+      <p><b>가장 많이 하는 실수:</b> 뽑기 티켓을 받자마자 써버리는 것. 한정 상점·이벤트 보상·보물 사냥꾼 같은 곳에서 받는 <b>뽑기 티켓도 전부 위 표의 &ldquo;재화&rdquo;</b>예요. 받았다고 바로 돌리지 말고, <b>그 티켓의 이벤트 주간이 올 때까지 들고 계세요.</b> 특히 마법 창조는 900개가 필요해서, 미리 안 모으면 한 바퀴(21일)를 통째로 넘기게 됩니다.</p>
     </div>
 
     <div class="cycle-list">
@@ -864,16 +872,16 @@
         <div class="cycle-week">1주차</div>
         <div>
           <h3>마물 이벤트</h3>
-          <p>평소 모아둔 마물 연성 재화를 집중해서 씁니다. 이 주에도 마법 창조 재화는 하루 20개씩 계속 쌓아두세요.</p>
-          <span class="cycle-cost">마물 연성 재화 270개 = 1라운드</span>
+          <p>평소 모아둔 마물 연성 티켓을 집중해서 씁니다. 이 주에도 마법 창조 티켓은 하루 20개씩 계속 쌓아두세요.</p>
+          <span class="cycle-cost">마물 연성 티켓 270개 = 1라운드</span>
         </div>
       </div>
       <div class="cycle-row">
         <div class="cycle-week">2주차</div>
         <div>
           <h3>아티팩트 이벤트</h3>
-          <p>아티팩트 소환 재화를 하루 5~10개씩 꾸준히 사면서 진행해요. 마법 창조 재화는 계속 저축.</p>
-          <span class="cycle-cost">아티팩트 소환 재화 270개 = 1라운드</span>
+          <p>아티팩트 소환 티켓을 하루 5~10개씩 꾸준히 모으면서 진행해요. 마법 창조 티켓은 계속 저축.</p>
+          <span class="cycle-cost">아티팩트 소환 티켓 270개 = 1라운드</span>
         </div>
       </div>
       <div class="cycle-row">
@@ -881,7 +889,7 @@
         <div>
           <h3>마법 이벤트</h3>
           <p>요구량이 가장 커요. 앞의 2주 동안 미리 쌓아두지 않으면 이번 바퀴는 넘길 수밖에 없어요.</p>
-          <span class="cycle-cost">마법 창조 재화 900개 = 1라운드</span>
+          <span class="cycle-cost">마법 창조 티켓 900개 = 1라운드</span>
         </div>
       </div>
     </div>
@@ -948,7 +956,7 @@
       <li class="chk-row" data-key="favor" data-title="호감도 올리기" data-adv="EX 환령은 호감도 20에서 조각 획득 확률이 100%가 돼요. 일반 환령은 10, 나머지는 8을 목표로 하면 호감도 탭에서 다이아 500개도 받습니다.">
         <button class="chk-toggle" aria-pressed="false"><span class="chk-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span><span class="chk-label">호감도를 꾸준히 올리고 있다</span></button>
       </li>
-      <li class="chk-row" data-key="magic" data-title="마법 창조 재화 미리 모아두기" data-adv="3주 사이클 중 마법 창조가 900개로 제일 비싸요. 지금이 1·2주차라면 하루 20개씩 쌓아두세요. 미리 안 모으면 이번 바퀴는 통째로 넘어갑니다.">
+      <li class="chk-row" data-key="magic" data-title="마법 창조 재화 미리 모아두기" data-adv="3주 사이클 중 마법 창조가 900개로 제일 비싸요. 여기서 말하는 재화는 뽑기 티켓이고, 이벤트·한정 상점에서 받은 티켓도 전부 포함이에요. 받자마자 쓰지 말고 그 이벤트 주간까지 들고 계세요.">
         <button class="chk-toggle" aria-pressed="false"><span class="chk-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span><span class="chk-label">마법 창조용 재화를 미리 모아두고 있다</span></button>
       </li>
       <li class="chk-row" data-key="star" data-title="성급공명 4단계 열기" data-adv="N등급 환령을 분해하면 나오는 슬라임 점액으로 4~6단계를 열 수 있어요. 부재료 환령이 부족할 때 특히 효율적입니다. 무별 달성 후엔 서약에 등록해 추가 버프까지 챙기세요.">
